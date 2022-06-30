@@ -19,12 +19,9 @@ pip3 install wheel
 ./scripts/ci/build.sh
 
 # From Fedora36, when using `pip install --prefix`with root, the package is installed into `{prefix}/local/lib`.
-# Move installed az modules to make sure tests can be installed correctly later
+# In order to keep the original installation path, I have to set RPM_BUILD_ROOT
 # Ref https://docs.fedoraproject.org/en-US/fedora/latest/release-notes/developers/Development_Python/
-if python3 -c "import sysconfig; print('local' in sysconfig.get_path('platlib'))" | grep True; then
-  mkdir -p /usr/lib64/az/local/
-  mv /usr/lib64/az/lib/ /usr/lib64/az/local/
-fi
+export RPM_BUILD_ROOT=/
 
 pip3 install pytest --prefix /usr/lib64/az
 pip3 install pytest-xdist --prefix /usr/lib64/az
